@@ -2,14 +2,12 @@ package main
 
 import (
 
-	"github.com/test/config"
-	"fmt"
+	"github.com/LearnEmprie/Martini/config"
+
 )
 
 func main() {
 
-	var result string
-	result = config.GetCurrentDirectory()
-	fmt.Println(result)
+	 config.GetConfig()
 	
 }

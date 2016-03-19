@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"bytes"
 )
 
 func substr(s string, pos, length int) string {
@@ -28,3 +29,24 @@ func GetCurrentDirectory() string {
 	return strings.Replace(dir, "\\", "/", -1)
 }
 
+func GetConfig()  {
+
+	var buffer bytes.Buffer
+
+	config_path := GetCurrentDirectory()
+
+	buffer.WriteString(config_path)
+	buffer.WriteString("/config.go")
+
+	file, err := os.Open(buffer.String()) // For read access.
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	data := make([]byte, 100)
+	count, err := file.Read(data)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("read %d bytes: %q\n", count, data[:count])
+}
