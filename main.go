@@ -2,19 +2,13 @@ package main
 
 
 import (
-	"html/template"
 	"fmt"
 	"github.com/LearnEmprie/Martini/sample"
 	"net/http"
-	"io/ioutil"
+	C "github.com/LearnEmprie/Martini/http/controller"
 )
 
-func viewHandler(w http.ResponseWriter, r *http.Request) {
 
-	httpGet()
-	t,err := template.ParseFiles("./view/index.html")
-	t.Execute(w,err)
-}
 
 func editHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/edit/"):]
@@ -35,20 +29,10 @@ func main() {
 
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-	http.HandleFunc("/view/", viewHandler)
+	http.HandleFunc("/view/", C.ViewHandler)
 	http.HandleFunc("/edit/", editHandler)
 	http.ListenAndServe(":8080", nil)
 
 }
 
 
-func httpGet()  {
-	resp,err := http.Get("http://127.0.0.1:3000/string/key/1")
-	if err != nil {
-		return
-	}
-	defer resp.Body.Close()
-	body , err := ioutil.ReadAll(resp.Body)
-
-	fmt.Println(string(body))
-}
