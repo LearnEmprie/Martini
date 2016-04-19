@@ -33,7 +33,7 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.HandleFunc("/view/", C.ViewHandler)
 	http.HandleFunc("/edit/", editHandler)
-	log.Fatal(http.ListenAndServe(":82", nil))
+	log.Fatal(http.ListenAndServe(":80", nil))
 
 }
 
