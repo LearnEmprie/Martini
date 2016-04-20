@@ -1,21 +1,39 @@
 package main
 
+
+
 import (
-	"net"
+	"fmt"
+	"github.com/LearnEmprie/Martini/sample"
 	"net/http"
-	"net/http/fcgi"
+	C "github.com/LearnEmprie/Martini/http/controller"
 )
 
-type FastCGIServer struct{}
 
-func (s FastCGIServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	resp.Write([]byte("<h1>Hello, 世界</h1>\n<p>Behold my Go web app.</p>"))
+
+func editHandler(w http.ResponseWriter, r *http.Request) {
+	title := r.URL.Path[len("/edit/"):]
+	p, err := sample.LoadPage(title)
+	if err != nil {
+		p = &sample.Page{Title: title}
+	}
+	fmt.Fprintf(w, "<h1>Editing %s</h1>"+
+	"<form action=\"/save/%s\" method=\"POST\">"+
+	"<textarea name=\"body\">%s</textarea><br>"+
+	"<input type=\"submit\" value=\"Save\">"+
+	"</form>",
+		p.Title, p.Title, p.Body)
 }
 
+
 func main() {
-	listener, _ := net.Listen("tcp", "127.0.0.1:9001")
-	srv := new(FastCGIServer)
-	fcgi.Serve(listener, srv)
+
+
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	http.HandleFunc("/view/", C.ViewHandler)
+	http.HandleFunc("/edit/", editHandler)
+	http.ListenAndServe(":81", nil)
+
 }
 
 /*

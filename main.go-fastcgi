@@ -1,0 +1,119 @@
+package main
+
+import (
+	"net"
+	"net/http"
+	//"net/http/fcgi"
+	"fmt"
+	"log"
+	"runtime"
+	"bufio"
+)
+
+
+type FastCGIServer struct{}
+
+func (s FastCGIServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
+
+	fmt.Println("++")
+	resp.Write([]byte("<h1>Hello, 世界</h1>\n<p>Behold my Go web app.</p>"))
+}
+
+func main() {
+	listener, _ := net.Listen("tcp", "127.0.0.1:9001")
+
+	//buf := make([]byte, 1000)
+
+	for {
+		conn, _ := listener.Accept()
+
+		fmt.Println(conn.RemoteAddr())
+
+		go DirectGetFromPHPFPM(conn)
+		/*
+		n, _ := conn.Read(buf)
+		N, err := conn.Write(client(buf, n))
+		fmt.Println(N, err)
+		conn.Close()*/
+	}
+}
+
+func DirectGetFromPHPFPM(nginxconn net.Conn)  {
+
+	var tongbu chan []byte = make(chan []byte)
+
+	//读取nginx打包的请求
+	nginxbuf 	 := make([]byte, 2000)
+
+
+	request_count, _ := nginxconn.Read(nginxbuf)
+	fpmconn , err    := net.Dial("tcp", "127.0.0.1:9000")
+	fmt.Println(err)
+
+	go ReadFPM(fpmconn,tongbu)
+
+
+	fmt.Println(request_count)
+
+	_,err  		  = fpmconn.Write(nginxbuf[0:request_count])
+	checkError(err)
+
+	fmt.Println(runtime.NumGoroutine())
+
+
+	nginxconn.Write(<-tongbu)
+	nginxconn.Close()
+	fpmconn.Close()
+}
+
+func ReadFPM(fpmconn net.Conn , tong chan []byte) {
+
+
+	reader := bufio.NewReader(fpmconn)
+
+
+	//fpm返回值buf
+	fpmbuf   	 := make([]byte, 200000)
+
+	fpm_count := 0
+
+	for {
+		read_count, err := reader.Read(fpmbuf[fpm_count:])
+
+		if err !=nil {
+			fmt.Println(err)
+			break
+		}else {
+			fpm_count += read_count
+			fmt.Println(fpm_count)
+		}
+	}
+
+	tong <- fpmbuf[0:fpm_count]
+}
+
+
+
+func client(buf []byte, n int) []byte {
+
+	dog := make([]byte, 200000)
+	conn, err := net.Dial("tcp", "127.0.0.1:9000")
+	checkError(err)
+
+	fmt.Println(buf[0:n])
+
+	N, err := conn.Write(buf[0:n])
+	checkError(err)
+	fmt.Println("W", N)
+	N, err = conn.Read(dog)
+	checkError(err)
+	fmt.Println("R", N)
+	fmt.Println(string(dog[0:N]))
+	return dog[0:N]
+}
+
+func checkError(err error) {
+	if err != nil {
+		log.Fatal("an error!", err.Error())
+	}
+}
