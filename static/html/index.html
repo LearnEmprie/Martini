@@ -2,33 +2,90 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>basic-demo</title>
+    <title>mock数据</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <script src="/static/js/template.js"></script>
+    <script src="/static/js/jquery-2.2.2.js"></script>
 </head>
 
 <body>
-<div id="content"></div>
+
+
+<div class="container">
+    <div id="content"></div>
+</div>
+
+
 <script id="test" type="text/html">
     {{if isAdmin}}
 
-    <h1>{{title}}</h1>
-    <ul>
-        {{each list as value i}}
-        <li>索引 {{i + 1}} ：{{value}}</li>
-        {{/each}}
-    </ul>
 
-    {{/if}}
+
+    <div class="row">
+
+        <div class="col-md-6">
+
+
+            <h1>{{title}}</h1>
+            <ul>
+                {{each list as value i}}
+                <li>{{value}}</li>
+                {{/each}}
+            </ul>
+
+            {{/if}}
+
+        </div>
+
+        <div class="col-md-6"></div>
+
+    </div>
+
+</script>
+
+
+<script id="sound" type="text/html">
+    {{if isAdmin}}
+
+
+
+    <div class="row">
+
+        <div class="col-md-6"></div>
+        <div class="col-md-6">
+
+
+            <h1>{{title}}</h1>
+            <ul>
+                {{each list as value i}}
+                <li>{{value}}</li>
+                {{/each}}
+            </ul>
+
+            {{/if}}
+
+        </div>
+
+    </div>
+
 </script>
 
 <script>
+
     var data = {
-        title: '基本例子',
+        title: '接口列表',
         isAdmin: true,
-        list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
+        list: ['获取详情页', '获取用户信息', '获取地址', '获取关注', '点赞', '优惠券', '餐饮娱乐']
     };
     var html = template('test', data);
     document.getElementById('content').innerHTML = html;
+    $("#content").css("background","#bbffaa");
+    $("#content").click(function(){
+        var html = template('sound', data);
+        document.getElementById('content').innerHTML = html;
+    });
+
+
 </script>
 </body>
 </html>

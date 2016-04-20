@@ -1,15 +1,13 @@
 package main
 
-
-
 import (
 	"fmt"
 	"github.com/LearnEmprie/Martini/sample"
 	"net/http"
 	C "github.com/LearnEmprie/Martini/http/controller"
+	"log"
+	"github.com/LearnEmprie/Martini/model"
 )
-
-
 
 func editHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/edit/"):]
@@ -25,15 +23,18 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 		p.Title, p.Title, p.Body)
 }
 
-
 func main() {
-
-
+	db := model.Db{}
+	db.New()
+	db.Insert()
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.HandleFunc("/view/", C.ViewHandler)
 	http.HandleFunc("/edit/", editHandler)
-	http.ListenAndServe(":81", nil)
 
+	http.HandleFunc("/")
+
+
+	log.Fatal(http.ListenAndServe(":80", nil))
 }
 
 /*
