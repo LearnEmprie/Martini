@@ -9,9 +9,11 @@ import (
 
 func ViewHandler(w http.ResponseWriter, r *http.Request) {
 
-	httpGet()
-	t,err := template.ParseFiles("./view/index.html")
-	t.Execute(w,err)
+	//httpGet()
+	t,err := template.ParseGlob("./view/index.html")
+	//t.Execute(w,err)
+
+	fmt.Println(t,err)
 }
 
 

@@ -1,55 +1,94 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+<!DOCTYPE HTML>
+<html>
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="../../favicon.ico">
-    <title>Signin Template for Bootstrap</title>
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-    <link href="signin.css" rel="stylesheet">
-
+    <meta charset="UTF-8">
+    <title>mock数据</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <script src="/static/js/template.js"></script>
+    <script src="/static/js/jquery-2.2.2.js"></script>
 </head>
 
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <h3 class="text-center text-info">
-                     计数器注册
-                </h3>
-                <div class="row">
-                    <div class="col-md-4">
-                        <form role="form">
-                            <div class="form-group">
 
-                                <label for="exampleInputEmail1">
-                                    Email address
-                                </label>
-                                <input type="email" class="form-control" id="exampleInputEmail1" />
-                            </div>
-                            <div class="form-group">
 
-                                <label for="exampleInputPassword1">
-                                    Password
-                                </label>
-                                <input type="password" class="form-control" id="exampleInputPassword1" />
-                            </div>
-                            <button type="submit" class="btn btn-default">
-                                Submit
-                            </button>
-                        </form>
-                    </div>
-                    <div class="col-md-4">
-                    </div>
-                    <div class="col-md-4">
-                    </div>
-                </div>
-            </div>
+<div class="container">
+
+    <div id="content"></div>
+
+</div>
+
+
+<script id="test" type="text/html">
+    {{if isAdmin}}
+
+
+
+    <div class="row">
+
+        <div class="col-md-6">
+
+
+            <h1>{{title}}</h1>
+            <ul>
+                {{each list as value i}}
+                <li>{{value}}</li>
+                {{/each}}
+            </ul>
+
+            {{/if}}
+
         </div>
+
+        <div class="col-md-6"></div>
+
     </div>
 
+</script>
+
+
+<script id="sound" type="text/html">
+    {{if isAdmin}}
+
+
+
+    <div class="row">
+
+        <div class="col-md-6"></div>
+        <div class="col-md-6">
+
+
+            <h1>{{title}}</h1>
+            <ul>
+                {{each list as value i}}
+                <li>{{value}}</li>
+                {{/each}}
+            </ul>
+
+            {{/if}}
+
+        </div>
+
+    </div>
+
+</script>
+
+<script>
+
+    var data = {
+        title: '接口列表',
+        isAdmin: true,
+        list: ['获取详情页', '获取用户信息', '获取地址', '获取关注', '点赞', '优惠券', '餐饮娱乐']
+    };
+    var html = template('test', data);
+    document.getElementById('content').innerHTML = html;
+    $("#content").css("background","#bbffaa");
+
+    $("#content").click(function(){
+        var html = template('sound', data);
+        document.getElementById('content').innerHTML = html;
+    });
+
+
+</script>
 </body>
 </html>
